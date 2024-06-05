@@ -12,7 +12,7 @@ export class Card extends Component<ICard> {
     constructor(protected blockName: string, container: HTMLElement, actions?: ICardActions) {
         super(container);
 
-        // Поиск и сохранение элементов карточки
+        // поиск и сохранение элементов карточки
         this._title = ensureElement<HTMLElement>(`.${blockName}__title`, container);
         this._image = ensureElement<HTMLImageElement>(`.${blockName}__image`, container);
         this._category = ensureElement<HTMLElement>(`.${blockName}__category`, container);
@@ -20,7 +20,7 @@ export class Card extends Component<ICard> {
         this._description = container.querySelector(`.${blockName}__text`);
         this._button = container.querySelector(`.${blockName}__button`);
 
-        // Добавление обработчика клика на кнопку
+        // добавление обработчика клика на кнопку
         if (actions?.onClick) {
             if (this._button) {
                 this._button.addEventListener('click', (actions.onClick));
@@ -30,7 +30,7 @@ export class Card extends Component<ICard> {
         }
     }
 
-    // Сеттеры для обновления данных в карточке
+    // сеттеры для обновления данных в карточке
     set title(value: string) {
         this.setText(this._title, value);
     }
@@ -52,7 +52,7 @@ export class Card extends Component<ICard> {
         this.toggleClass(this._category, `card__category_${this.getCategory(value)}`)
     }
 
-    // Вспомогательный метод для получения класса категории
+    // вспомогательный метод для получения класса категории
     getCategory(value: string): string {
         switch (value) {
             case 'софт-скил':
@@ -68,12 +68,12 @@ export class Card extends Component<ICard> {
         }
     }
 
-    // Метод для блокировки кнопки карточки
+    // метод для блокировки кнопки карточки
     blockedButton() {
         if (this._button) {
             this.setDisabled(this._button, true);
             this.setText(this._button, 'Запрещено!')
-            console.log('Данный товар нельзя купить, так как он бесценный. \nВы можете выбрать другие товары. \nЗакройте это окно и продолжайте покупки!');
+            console.log('Данный товар нельзя купить, потому что он бесценный');
         }
     }
 }
@@ -87,13 +87,13 @@ export class CardBasket extends Component<ICardBasket> {
     constructor(container: HTMLElement, actions?: ICardActions) {
         super(container);
 
-        // Поиск и сохранение элементов корзины
+        // поиск и сохранение элементов корзины
         this._title = ensureElement<HTMLElement>('.card__title', container);
         this._price = ensureElement<HTMLElement>('.card__price', container);
         this._button = container.querySelector('.card__button');
         this._index = container.querySelector('.basket__item-index');
 
-        // Добавление обработчика клика на кнопку
+        // добавление обработчика клика на кнопку
         if (actions?.onClick) {
             if (this._button) {
                 this._button.addEventListener('click', (actions.onClick));
@@ -101,7 +101,7 @@ export class CardBasket extends Component<ICardBasket> {
         }
     }
 
-    // Сеттеры для обновления данных в корзине
+    // сеттеры для обновления данных в корзине
     set title(value: string) {
         this.setText(this._title, value);
     }

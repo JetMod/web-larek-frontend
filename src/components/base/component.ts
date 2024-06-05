@@ -1,30 +1,30 @@
 /**
- * Базовый компонент
+ * базовый компонент
  */
 abstract class Component<T> {
-    // Защищенный контейнер для элемента
+    // защищенный контейнер для элемента
     protected readonly container: HTMLElement;
   
-    // Конструктор принимает контейнер, в который будет рендериться компонент
+    // конструктор принимает контейнер, в который будет рендериться компонент
     protected constructor(container: HTMLElement) {
       this.container = container;
     }
   
-    // Утилиты для работы с DOM в дочерних компонентах
+    // утилиты для работы с DOM в дочерних компонентах
   
-    // Переключить класс на элементе
+    // переключить класс на элементе
     protected toggleClass(element: HTMLElement, className: string, force?: boolean): void {
       element.classList.toggle(className, force);
     }
   
-    // Установить текстовое содержимое элемента
+    // установить текстовое содержимое элемента
     protected setText(element: HTMLElement, value: unknown): void {
       if (element) {
         element.textContent = String(value);
       }
     }
   
-    // Установить изображение с текстом
+    // установить изображение с текстом
     protected setImage(element: HTMLImageElement, src: string, alt?: string): void {
       if (element) {
         element.src = src;
@@ -34,7 +34,7 @@ abstract class Component<T> {
       }
     }
   
-    // Изменить статус блокировки элемента
+    // изменить статус блокировки элемента
     protected setDisabled(element: HTMLElement, state: boolean): void {
       if (element) {
         if (state) {
@@ -45,17 +45,17 @@ abstract class Component<T> {
       }
     }
   
-    // Скрыть элемент
+    // скрыть элемент
     protected setHidden(element: HTMLElement): void {
       element.style.display = 'none';
     }
   
-    // Показать элемент
+    // показать элемент
     protected setVisible(element: HTMLElement): void {
       element.style.removeProperty('display');
     }
   
-    // Вернуть корневой DOM-элемент
+    // вернуть корневой DOM-элемент
     public render(data?: Partial<T>): HTMLElement {
       Object.assign(this, data ?? {});
       return this.container;

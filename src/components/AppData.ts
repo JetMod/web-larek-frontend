@@ -99,7 +99,7 @@ export class AppState extends Model<IAppState> {
       errors.address = "Необходимо указать адрес";
     } else if (!addressPattern.test(this.order.address)) {
       errors.address =
-        "Адрес должен содержать только буквы, цифры, пробелы, точки, запятые и '/', и быть не менее 20 символов";
+        "Некорректный адрес";
     }
 
     if (!this.order.payment) {
@@ -127,13 +127,13 @@ export class AppState extends Model<IAppState> {
     if (!this.order.email) {
       errors.email = "Необходимо указать email";
     } else if (!emailPattern.test(this.order.email)) {
-      errors.email = "Некорректный адрес электронной почты";
+      errors.email = "Некорректный адрес";
     }
 
     if (!this.order.phone) {
       errors.phone = "Необходимо указать телефон";
     } else if (!phonePattern.test(this.order.phone)) {
-      errors.phone = "Телефон должен быть указан в таком формате: +7(XXX)XXX-XX-XX";
+      errors.phone = "Телефон должен быть в формате: +7(XXX)XXX-XX-XX";
     }
 
     this.formErrors = errors;

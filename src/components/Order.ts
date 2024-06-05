@@ -1,6 +1,6 @@
+import { IEvents } from "./base/events";
 import { Form } from "./common/Form";
 import { IOrderForm, Pay } from "../types/index";
-import { IEvents } from "./base/events";
 
 export class Order extends Form<IOrderForm> {
   protected _buttonCard: HTMLButtonElement;

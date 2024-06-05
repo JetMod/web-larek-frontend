@@ -1,17 +1,18 @@
 import './scss/styles.scss';
-import {LarekAPI} from "./components/LarekAPI";
-import {API_URL, CDN_URL} from "./utils/constants";
 import {EventEmitter} from "./components/base/events";
 import {AppState, CardItem} from "./components/AppData";
+import {Order} from "./components/Order";
 import {Page} from "./components/Page";
+import { Contacts } from './components/Contacts';
+import {LarekAPI} from "./components/LarekAPI";
 import {Card, CardBasket} from "./components/Card";
 import {cloneTemplate, ensureElement, formatNumber} from "./utils/utils";
 import {Modal} from "./components/common/Modal";
 import {Basket} from "./components/common/Basket";
-import {ICardItem, IContactsForm, IValidityOrderForm, Catalog, IOrderResult} from "./types";
-import {Order} from "./components/Order";
 import {Success} from "./components/common/Success";
-import { Contacts } from './components/Contacts';
+import {API_URL, CDN_URL} from "./utils/constants";
+import {ICardItem, IContactsForm, IValidityOrderForm, Catalog, IOrderResult} from "./types";
+
 
 const events = new EventEmitter();
 const api = new LarekAPI(CDN_URL, API_URL);
@@ -26,17 +27,18 @@ const orderTemplate = ensureElement<HTMLTemplateElement>('#order');
 const successTemplate = ensureElement<HTMLTemplateElement>('#success');
 const appData = new AppState({}, events);
 const page = new Page(document.body, events);
+const contacts = new Contacts(cloneTemplate(contactsTemplate), events);
+const success = new Success(cloneTemplate(successTemplate), {onClick: () => modal.close()});
 const modal = new Modal(ensureElement<HTMLElement>('#modal-container'), events);
 const basket = new Basket(cloneTemplate(basketTemplate), events);
 const order = new Order(cloneTemplate(orderTemplate), events);
-const contacts = new Contacts(cloneTemplate(contactsTemplate), events);
-const success = new Success(cloneTemplate(successTemplate), {onClick: () => modal.close()});
+
 
 //получение списка карточек
 api.getCardList()
     .then(appData.setCatalog.bind(appData))
     .catch(err => {
-        console.error('Произошла ошибка с получением данных с сервера: ', err);
+        console.error('Произошла ошибка с получением данных: ', err);
     });
 
 //открытие корзины
@@ -213,7 +215,7 @@ events.on('contacts:submit', () => {
             events.emit('catalog:view');
         })
         .catch(err => {
-            console.error('Не удалось оформить заказ, произошла ошибка при попытке оплатить: ', err);
+            console.error('Не удалось оформить заказ: ', err);
         });
 });
 

@@ -11,7 +11,7 @@ export const isModel = <T>(obj: unknown): obj is Model<T> => {
 };
 
 /**
- * Абстрактный базовый класс для моделей.
+ * абстрактный базовый класс для моделей.
  */
 export abstract class Model<T> {
     constructor(data: Partial<T>, protected readonly events: IEvents) {

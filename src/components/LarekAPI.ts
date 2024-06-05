@@ -4,7 +4,6 @@ import { IWebLarekAPI } from '../types';
 
 export class LarekAPI extends Api implements IWebLarekAPI {
     readonly cdn: string;
-
     constructor(cdn: string, baseUrl: string, options?: RequestInit) {
         super(baseUrl, options);
         this.cdn = cdn;
