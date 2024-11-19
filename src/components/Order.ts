@@ -1,59 +1,47 @@
-import { IEvents } from "./base/events";
 import { Form } from "./common/Form";
-import { IOrderForm, Pay } from "../types/index";
+import { OrderForm, PaymentMethod } from "../types";
+import { EventEmitter } from "./base/events";
+import { ensureElement } from "../utils/utils";
 
-export class Order extends Form<IOrderForm> {
-  protected _buttonCard: HTMLButtonElement;
-  protected _buttonCash: HTMLButtonElement;
-  protected _payment: Pay;
+export class Order extends Form<OrderForm> {
+    private _paymentButtons: Record<PaymentMethod, HTMLButtonElement>;
 
-  constructor(container: HTMLFormElement, events: IEvents) {
-    super(container, events);
+    constructor(events: EventEmitter, container: HTMLFormElement) {
+        super(events, container);
 
-    this._buttonCard = container.querySelector('[name="card"]') as HTMLButtonElement;
-    this._buttonCash = container.querySelector('[name="cash"]') as HTMLButtonElement;
+        this._paymentButtons = {
+            card: ensureElement<HTMLButtonElement>('.button_alt[name=card]', this.container),
+            cash: ensureElement<HTMLButtonElement>('.button_alt[name=cash]', this.container),
+        };
 
-    if (this._buttonCard) {
-      this._buttonCard.addEventListener('click', () => {
-        this.handlePaymentChange('card', 'online');
-      });
+        this._initializePaymentButtons();
     }
 
-    if (this._buttonCash) {
-      this._buttonCash.addEventListener('click', () => {
-        this.handlePaymentChange('cash', 'offline');
-      });
+    private _initializePaymentButtons(): void {
+        Object.entries(this._paymentButtons).forEach(([method, button]) => {
+            button.addEventListener('click', () => {
+                this.payment = method as PaymentMethod;
+                this.onInputChange('payment', method);
+            });
+        });
     }
-  }
 
-  private handlePaymentChange(type: 'card' | 'cash', value: Pay): void {
-    const field = 'payment';
-    this.events.emit(`${this.container.name}.${type}:change`, { field, value });
-    this.payment = value;
-    this.toggleActiveClass(type);
-  }
-
-  private toggleActiveClass(type: 'card' | 'cash'): void {
-    if (type === 'card') {
-      this._buttonCard.classList.add('button_alt-active');
-      this._buttonCash.classList.remove('button_alt-active');
-    } else {
-      this._buttonCash.classList.add('button_alt-active');
-      this._buttonCard.classList.remove('button_alt-active');
+    set payment(value: PaymentMethod) {
+        Object.entries(this._paymentButtons).forEach(([method, button]) => {
+            button.classList.toggle('button_alt-active', method === value);
+        });
     }
-  }
 
-  set address(value: string) {
-    (this.container.elements.namedItem('address') as HTMLInputElement).value = value;
-  }
+    set address(value: string) {
+        this._setInputValue('address', value);
+    }
 
-  set payment(value: Pay) {
-    this._payment = value;
-  }
-
-  isDisable(): void {
-    this.toggleActiveClass('card');
-    this.toggleActiveClass('cash');
-    this.events.emit(`${this.container.name}.cash:change`, { field: 'payment', value: '' });
-  }
+    private _setInputValue(fieldName: keyof OrderForm, value: string): void {
+        const input = this.container.elements.namedItem(fieldName) as HTMLInputElement | null;
+        if (input) {
+            input.value = value;
+        } else {
+            console.warn(`Поле с именем "${fieldName}" не найдено в форме.`);
+        }
+    }
 }

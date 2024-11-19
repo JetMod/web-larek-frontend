@@ -1,65 +1,35 @@
-/**
- * базовый компонент
- */
-abstract class Component<T> {
-    // защищенный контейнер для элемента
-    protected readonly container: HTMLElement;
-  
-    // конструктор принимает контейнер, в который будет рендериться компонент
-    protected constructor(container: HTMLElement) {
-      this.container = container;
+import { IEvents } from "./events";
+
+export abstract class Component<T> {
+    constructor(protected readonly container: HTMLElement) { }
+
+    toggleClass(element: HTMLElement, className: string, force?: boolean) {
+        element.classList.toggle(className, force);
     }
-  
-    // утилиты для работы с DOM в дочерних компонентах
-  
-    // переключить класс на элементе
-    protected toggleClass(element: HTMLElement, className: string, force?: boolean): void {
-      element.classList.toggle(className, force);
-    }
-  
-    // установить текстовое содержимое элемента
-    protected setText(element: HTMLElement, value: unknown): void {
-      if (element) {
-        element.textContent = String(value);
-      }
-    }
-  
-    // установить изображение с текстом
-    protected setImage(element: HTMLImageElement, src: string, alt?: string): void {
-      if (element) {
-        element.src = src;
-        if (alt) {
-          element.alt = alt;
+
+    protected setText(element: HTMLElement, value: unknown) {
+        if (element) {
+            element.textContent = String(value);
         }
-      }
     }
-  
-    // изменить статус блокировки элемента
-    protected setDisabled(element: HTMLElement, state: boolean): void {
-      if (element) {
-        if (state) {
-          element.setAttribute('disabled', 'disabled');
-        } else {
-          element.removeAttribute('disabled');
+
+    protected setImage(element: HTMLImageElement, src: string, alt?: string) {
+        if (element) {
+            element.src = src;
+            if (alt) {
+                element.alt = alt;
+            }
         }
-      }
     }
-  
-    // скрыть элемент
-    protected setHidden(element: HTMLElement): void {
-      element.style.display = 'none';
+
+    render(data?: Partial<T>): HTMLElement {
+        Object.assign(this as object, data ?? {});
+        return this.container;
     }
-  
-    // показать элемент
-    protected setVisible(element: HTMLElement): void {
-      element.style.removeProperty('display');
+}
+
+export class View<T> extends Component<T> {
+    constructor(protected readonly events: IEvents, container: HTMLElement) {
+        super(container);
     }
-  
-    // вернуть корневой DOM-элемент
-    public render(data?: Partial<T>): HTMLElement {
-      Object.assign(this, data ?? {});
-      return this.container;
-    }
-  }
-  
-  export { Component };
+}

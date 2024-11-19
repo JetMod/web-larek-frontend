@@ -1,47 +1,64 @@
-import { Component } from "../base/component";
+
+import { View } from "../base/Component";
+import { createElement, cloneTemplate, ensureElement } from "../../utils/utils";
 import { EventEmitter } from "../base/events";
 import { IBasketView } from "../../types";
 
-import { createElement, ensureElement, formatNumber } from "../../utils/utils";
+export class Basket extends View<IBasketView> {
+    static template = ensureElement<HTMLTemplateElement>('#basket');
 
-export class Basket extends Component<IBasketView> {
-  protected _list: HTMLElement;
-  protected _total: HTMLElement;
-  protected _button: HTMLElement;
+    private _list: HTMLElement;
+    private _total: HTMLElement | null;
+    private _button: HTMLButtonElement | null;
 
-  constructor(container: HTMLElement, protected events: EventEmitter) {
-    super(container);
+    constructor(protected events: EventEmitter) {
+        const container = cloneTemplate(Basket.template);
+        super(events, cloneTemplate(Basket.template));
 
-    this._list = ensureElement<HTMLElement>(".basket__list", this.container);
-    this._total = this.container.querySelector(".basket__price");
-    this._button = this.container.querySelector(".basket__button");
+        this._list = ensureElement<HTMLElement>('.basket__list', this.container);
+        this._total = this.container.querySelector('.basket__price');
+        this._button = this.container.querySelector('.basket__button');
 
-    if (this._button) {
-      this._button.addEventListener("click", () => {
-        this.events.emit("order:open");
-      });
+        this._initializeButton();
+        this.items = [];
     }
 
-    this.items = [];
-  }
-
-  set items(items: HTMLElement[]) {
-    if (items.length) {
-      this._list.replaceChildren(...items);
-    } else {
-      this._list.replaceChildren(
-        createElement<HTMLParagraphElement>("p", {
-          textContent: "Корзина пуста",
-        })
-      );
+    private _initializeButton(): void {
+        if (this._button) {
+            this._button.addEventListener('click', () => {
+                this.events.emit('order:open');
+            });
+        }
     }
-  }
 
-  set total(total: number) {
-    this.setText(this._total, `${formatNumber(total)} синпсов`);
-  }
+    set items(items: HTMLElement[]) {
+        if (items.length > 0) {
+            this._updateList(items);
+            this._toggleButtonState(false);
+        } else {
+            this._displayEmptyMessage();
+            this._toggleButtonState(true);
+        }
+    }
 
-  set selected(items: string[]) {
-    this.setDisabled(this._button, items.length === 0);
-  }
+    set total(price: number) {
+        this.setText(this._total, price);
+    }
+
+    private _updateList(items: HTMLElement[]): void {
+        this._list.replaceChildren(...items);
+    }
+
+    private _displayEmptyMessage(): void {
+        const emptyMessage = createElement<HTMLParagraphElement>('p', {
+            textContent: 'Корзина пуста',
+        });
+        this._list.replaceChildren(emptyMessage);
+    }
+
+    private _toggleButtonState(disabled: boolean): void {
+        if (this._button) {
+            this._button.disabled = disabled;
+        }
+    }
 }

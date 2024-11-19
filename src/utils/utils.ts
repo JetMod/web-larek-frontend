@@ -10,10 +10,6 @@ export function isEmpty(value: any): boolean {
     return value === null || value === undefined;
 }
 
-export function formatNumber(x: number, sep = ' ') {
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, sep);
-}
-
 export type SelectorCollection<T> = string | NodeListOf<Element> | T[];
 
 export function ensureAllElements<T extends HTMLElement>(selectorElement: SelectorCollection<T>, context: HTMLElement = document as unknown as HTMLElement): T[] {
@@ -85,7 +81,6 @@ export function setElementData<T extends Record<string, unknown> | object>(el: H
 /**
  * Получает типизированные данные из dataset атрибутов элемента
  */
-
 export function getElementData<T extends Record<string, unknown>>(el: HTMLElement, scheme: Record<string, Function>): T {
     const data: Partial<T> = {};
     for (const key in el.dataset) {

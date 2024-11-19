@@ -1,143 +1,90 @@
-import _ from "lodash";
-import {
-  ICardItem,
-  FormErrors,
-  IAppState,
-  IOrder,
-  IValidityOrderForm,
-  IContactsForm,
-} from "../types";
-import { Model } from "./base/model";
+import { IBasket, IOrder, IProduct, OrderForm, PaymentMethod } from "../types";
+import { IEvents } from "./base/events";
 
-export class CardItem extends Model<ICardItem> {
-  id: string;
-  description: string;
-  image: string;
-  title: string;
-  category: string;
-  price: number;
-}
+export class AppData {
+    items: IProduct[] = [];
+    basket: IBasket = {
+        items: [],
+        total: 0,
+    };
+    preview: IProduct | null = null;
+    order: IOrder = {
+        payment: 'card',
+        email: '',
+        phone: '',
+        address: '',
+        total: 0,
+        items: [],
+    };
+    formErrors: Partial<Record<keyof OrderForm, string>> = {};
 
-export class AppState extends Model<IAppState> {
-  catalog: ICardItem[] = [];
-  basket: string[] = [];
-  order: IOrder = {
-    payment: "",
-    email: "",
-    phone: "",
-    address: "",
-    total: 0,
-    items: [],
-  };
-  formErrors: FormErrors = {};
+    constructor(private readonly events: IEvents) { }
 
-  setCatalog(items: ICardItem[]) {
-    this.catalog = items;
-    this.emitChanges("items:changed", { catalog: this.catalog });
-  }
-
-  setPreview(item: ICardItem) {
-    this.emitChanges("preview:changed", item);
-  }
-
-  getCountLots(): number {
-    return this.order.items.length;
-  }
-
-  getBasketLots(): ICardItem[] {
-    return this.catalog.filter(
-      (item) => this.order.items.includes(item.id) && !this.basket.includes(item.id)
-    );
-  }
-
-  getCatalogLots(): ICardItem[] {
-    return this.catalog.filter(
-      (item) => !this.order.items.includes(item.id) && !this.basket.includes(item.id)
-    );
-  }
-
-  toggleOrderedCard(id: string, isIncluded: boolean) {
-    if (isIncluded) {
-      this.order.items = _.uniq([...this.order.items, id]);
-    } else {
-      this.order.items = _.without(this.order.items, id);
-    }
-  }
-
-  clearBasket() {
-    this.order.items.forEach((id) => {
-      this.basket.push(id);
-      this.toggleOrderedCard(id, false);
-    });
-    this.order.payment = "";
-    this.order.address = "";
-    this.order.email = "";
-    this.order.phone = "";
-    this.order.total = 0;
-  }
-
-  getTotal() {
-    return this.order.items.reduce(
-      (a, c) => a + this.catalog.find((it) => it.id === c)!.price,
-      0
-    );
-  }
-
-  setOrderField(field: keyof IValidityOrderForm, value: string) {
-    this.order[field] = value;
-
-    if (this.validateOrder()) {
-      this.events.emit("order:ready", this.order);
-    }
-  }
-
-  validateOrder() {
-    const errors: typeof this.formErrors = {};
-    const addressPattern = /^[а-яА-ЯёЁa-zA-Z0-9\s\/.,-]{20,}$/;
-
-    if (!this.order.address) {
-      errors.address = "Необходимо указать адрес";
-    } else if (!addressPattern.test(this.order.address)) {
-      errors.address =
-        "Некорректный адрес";
+    setItems(items: IProduct[]): void {
+        this.items = items;
+        this.events.emit('items:change', this.items);
     }
 
-    if (!this.order.payment) {
-      errors.payment = "Необходимо указать вид оплаты";
+    setPreview(item: IProduct): void {
+        this.preview = item;
+        this.events.emit('preview:change', this.preview);
     }
 
-    this.formErrors = errors;
-    this.events.emit("orderErrors:change", this.formErrors);
-    return Object.keys(errors).length === 0;
-  }
-
-  setContactsField(field: keyof IContactsForm, value: string) {
-    this.order[field] = value;
-
-    if (this.validateContacts()) {
-      this.events.emit("contacts:ready", this.order);
-    }
-  }
-
-  validateContacts() {
-    const errors: typeof this.formErrors = {};
-    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    const phonePattern = /^\+7\(\d{3}\)\d{3}-\d{2}-\d{2}$/;
-
-    if (!this.order.email) {
-      errors.email = "Необходимо указать email";
-    } else if (!emailPattern.test(this.order.email)) {
-      errors.email = "Некорректный адрес";
+    inBasket(item: IProduct): boolean {
+        return this.basket.items.includes(item.id);
     }
 
-    if (!this.order.phone) {
-      errors.phone = "Необходимо указать телефон";
-    } else if (!phonePattern.test(this.order.phone)) {
-      errors.phone = "Телефон должен быть в формате: +7(XXX)XXX-XX-XX";
+    addToBasket(item: IProduct): void {
+        this.basket.items.push(item.id);
+        this.basket.total += item.price;
+        this._emitBasketChange();
     }
 
-    this.formErrors = errors;
-    this.events.emit("contactsErrors:change", this.formErrors);
-    return Object.keys(errors).length === 0;
-  }
+    removeFromBasket(item: IProduct): void {
+        this.basket.items = this.basket.items.filter((id) => id !== item.id);
+        this.basket.total -= item.price;
+        this._emitBasketChange();
+    }
+
+    clearBasket(): void {
+        this.basket.items = [];
+        this.basket.total = 0;
+        this._emitBasketChange();
+    }
+
+    private _emitBasketChange(): void {
+        this.events.emit('basket:change', this.basket);
+    }
+
+    setPaymentMethod(value: PaymentMethod): void {
+        this.order.payment = value;
+    }
+
+    setOrderField(field: keyof OrderForm, value: string): void {
+        if (field === 'payment') {
+            this.setPaymentMethod(value as PaymentMethod);
+        } else {
+            this.order[field] = value;
+        }
+        if (this.order.payment && this.validateOrder()) {
+            this._updateOrderFromBasket();
+        }
+    }
+
+    private _updateOrderFromBasket(): void {
+        this.order.total = this.basket.total;
+        this.order.items = this.basket.items;
+    }
+
+    validateOrder(): boolean {
+        const errors: Partial<Record<keyof OrderForm, string>> = {};
+
+        if (!this.order.email) errors.email = 'Необходимо указать email';
+        if (!this.order.phone) errors.phone = 'Необходимо указать телефон';
+        if (!this.order.address) errors.address = 'Необходимо указать адрес';
+
+        this.formErrors = errors;
+        this.events.emit('formErrors:change', this.formErrors);
+        return Object.keys(errors).length === 0;
+    }
 }
