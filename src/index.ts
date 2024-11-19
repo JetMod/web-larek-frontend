@@ -1,16 +1,16 @@
 import './scss/styles.scss';
-import { EventEmitter } from './src/components/base/events';
-import { AppData } from './src/components/AppData';
-import { LarekAPI } from './src/components/LarekApi';
-import { Page } from './src/components/Page';
-import { Card } from './src/components/Card';
-import { Order } from './src/components/Order';
-import { Contacts } from './src/components/Contacts';
+import { EventEmitter } from './components/base/events';
+import { AppData } from './components/AppData';
+import { LarekAPI } from './components/LarekApi';
+import { Page } from './components/Page';
+import { Card } from './components/Card';
+import { Order } from './components/Order';
+import { Contacts } from './components/Contacts';
 import { API_URL, CDN_URL } from './utils/constants';
 import { cloneTemplate, ensureElement } from './utils/utils';
-import { Modal } from './src/components/common/Modal';
-import { Basket } from './src/components/common/Basket';
-import { Success } from './src/components/common/Success';
+import { Modal } from './components/common/Modal';
+import { Basket } from './components/common/Basket';
+import { Success } from './components/common/Success';
 import { OrderField, IProduct, OrderForm } from './types';
 
 const api = new LarekAPI(CDN_URL, API_URL);

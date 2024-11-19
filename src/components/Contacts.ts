@@ -1,5 +1,5 @@
 import { Form } from './common/Form';
-import { OrderForm } from '../../types/index';
+import { OrderForm } from '../types/index';
 import { EventEmitter } from './base/events';
 
 export class Contacts extends Form<OrderForm> {

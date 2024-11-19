@@ -1,8 +1,8 @@
 
 import { View } from "../base/Component";
-import { createElement, cloneTemplate, ensureElement } from "../../../utils/utils";
+import { createElement, cloneTemplate, ensureElement } from "../../utils/utils";
 import { EventEmitter } from "../base/events";
-import { IBasketView } from "../../../types";
+import { IBasketView } from "../../types";
 
 export class Basket extends View<IBasketView> {
     static template = ensureElement<HTMLTemplateElement>('#basket');

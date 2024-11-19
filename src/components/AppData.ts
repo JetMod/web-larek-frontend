@@ -1,4 +1,4 @@
-import { IBasket, IOrder, IProduct, OrderForm, PaymentMethod } from "../../types";
+import { IBasket, IOrder, IProduct, OrderForm, PaymentMethod } from "../types";
 import { IEvents } from "./base/events";
 
 export class AppData {
