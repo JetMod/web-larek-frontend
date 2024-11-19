@@ -1,7 +1,7 @@
 import { View } from "./base/Component";
 import { IEvents } from "./base/events";
-import { ensureElement } from "../utils/utils";
-import { IPage } from "../types";
+import { ensureElement } from "../../utils/utils";
+import { IPage } from "../../types";
 
 export class Page extends View<IPage> {
     private _counter: HTMLElement;

@@ -6,12 +6,12 @@ import { Page } from './src/components/Page';
 import { Card } from './src/components/Card';
 import { Order } from './src/components/Order';
 import { Contacts } from './src/components/Contacts';
-import { API_URL, CDN_URL } from './src/utils/constants';
-import { cloneTemplate, ensureElement } from './src/utils/utils';
+import { API_URL, CDN_URL } from './utils/constants';
+import { cloneTemplate, ensureElement } from './utils/utils';
 import { Modal } from './src/components/common/Modal';
 import { Basket } from './src/components/common/Basket';
 import { Success } from './src/components/common/Success';
-import { OrderField, IProduct, OrderForm } from './src/types';
+import { OrderField, IProduct, OrderForm } from './types';
 
 const api = new LarekAPI(CDN_URL, API_URL);
 const events = new EventEmitter();

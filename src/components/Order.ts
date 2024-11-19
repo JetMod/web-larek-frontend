@@ -1,7 +1,7 @@
 import { Form } from "./common/Form";
-import { OrderForm, PaymentMethod } from "../types";
+import { OrderForm, PaymentMethod } from "../../types";
 import { EventEmitter } from "./base/events";
-import { ensureElement } from "../utils/utils";
+import { ensureElement } from "../../utils/utils";
 
 export class Order extends Form<OrderForm> {
     private _paymentButtons: Record<PaymentMethod, HTMLButtonElement>;
