@@ -1084,11 +1084,6 @@
 "@types/json-schema@*", "@types/json-schema@^7.0.8", "@types/json-schema@^7.0.9":
   version "7.0.11"
 
-"@types/lodash@^4.14.202":
-  version "4.17.4"
-  resolved "https://registry.npmjs.org/@types/lodash/-/lodash-4.17.4.tgz"
-  integrity sha512-wYCP26ZLxaT3R39kiN2+HcJ4kTd3U1waI/cY7ivWYqFP6pW3ZNpvi6Wd6PHZx7T/t8z0vlkXMg3QYLa7DZ/IJQ==
-
 "@types/mime@*":
   version "3.0.1"
 

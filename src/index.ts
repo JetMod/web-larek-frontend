@@ -1,7 +1,7 @@
 import './scss/styles.scss';
 import { EventEmitter } from './components/base/events';
 import { AppData } from './components/AppData';
-import { LarekAPI } from './components/LarekApi';
+import { LarekAPI } from './components/LarekAPI';
 import { Page } from './components/Page';
 import { Card } from './components/Card';
 import { Order } from './components/Order';
