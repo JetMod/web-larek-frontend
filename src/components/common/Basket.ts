@@ -1,5 +1,5 @@
 
-import { View } from "../base/Component";
+import { View } from "../base/component";
 import { createElement, cloneTemplate, ensureElement } from "../../utils/utils";
 import { EventEmitter } from "../base/events";
 import { IBasketView } from "../../types";
