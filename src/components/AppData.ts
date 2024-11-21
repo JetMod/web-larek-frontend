@@ -35,15 +35,20 @@ export class AppData {
     }
 
     addToBasket(item: IProduct): void {
-        this.basket.items.push(item.id);
-        this.basket.total += item.price;
-        this._emitBasketChange();
+        if (!this.inBasket(item)) {
+            this.basket.items.push(item.id);
+            this.basket.total += item.price;
+            this._emitBasketChange();
+        }
     }
 
     removeFromBasket(item: IProduct): void {
-        this.basket.items = this.basket.items.filter((id) => id !== item.id);
-        this.basket.total -= item.price;
-        this._emitBasketChange();
+        const itemIndex = this.basket.items.indexOf(item.id);
+        if (itemIndex !== -1) {
+            this.basket.items.splice(itemIndex, 1);
+            this.basket.total -= item.price;
+            this._emitBasketChange();
+        }
     }
 
     clearBasket(): void {
