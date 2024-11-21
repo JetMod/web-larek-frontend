@@ -1,4 +1,4 @@
-import { View } from "../base/component";
+import { View } from "../base/Component";
 import { EventEmitter } from "../base/events";
 import { ensureElement } from "../../utils/utils";
 import { IFormState } from "../../types";
