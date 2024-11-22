@@ -40,7 +40,7 @@ function handleError(error: any) {
 } 
 
 events.on('contacts:submit', () => { 
-    api.orderProducts(appData.order) 
+    api.orderProducts(appData.getFullOrder())
         .then(result => { 
             appData.clearBasket(); 
             modal.render({ 
@@ -48,7 +48,8 @@ events.on('contacts:submit', () => {
             }); 
         }) 
         .catch(handleError); 
-}); 
+});
+
 
 events.on('order:open', () => { 
     modal.render({ 

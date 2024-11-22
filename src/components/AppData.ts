@@ -8,19 +8,32 @@ export class AppData {
         total: 0,
     };
     preview: IProduct | null = null;
-    order: IOrder = {
+    order: Omit<IOrder, 'total' | 'items'> = {
         payment: 'card',
         email: '',
         phone: '',
         address: '',
-        total: 0,
-        items: [],
-        // у меня не получаеться убрать дублирование, можете пожалуйста дать более подробный коментарий как я могу это исправить
-        // спасибо
     };
     formErrors: Partial<Record<keyof OrderForm, string>> = {};
 
-    constructor(private readonly events: IEvents) { }
+    constructor(private readonly events: IEvents) {}
+
+    // методы total и items
+    getOrderTotal(): number {
+        return this.basket.total;
+    }
+
+    getOrderItems(): string[] {
+        return this.basket.items;
+    }
+
+    getFullOrder(): IOrder {
+    return {
+        ...this.order,
+        total: this.basket.total,
+        items: this.basket.items,
+    };
+}
 
     setItems(items: IProduct[]): void {
         this.items = items;
@@ -73,14 +86,7 @@ export class AppData {
         } else {
             this.order[field] = value;
         }
-        if (this.order.payment && this.validateOrder()) {
-            this._updateOrderFromBasket();
-        }
-    }
-
-    private _updateOrderFromBasket(): void {
-        this.order.total = this.basket.total;
-        this.order.items = this.basket.items;
+        this.validateOrder();
     }
 
     validateOrder(): boolean {
