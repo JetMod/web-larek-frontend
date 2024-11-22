@@ -15,6 +15,8 @@ export class AppData {
         address: '',
         total: 0,
         items: [],
+        // у меня не получаеться убрать дублирование, можете пожалуйста дать более подробный коментарий как я могу это исправить
+        // спасибо
     };
     formErrors: Partial<Record<keyof OrderForm, string>> = {};
 
